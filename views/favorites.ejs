@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pokedex</title>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+        <style>
+            button {
+                margin-left: 20px;
+            }
+
+            a {
+                text-decoration: underline;
+                color: black;
+                font-size: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <script type="application/javascript">
+            const removeFavorite = async (name) => {
+                await fetch(`http://localhost:3000/pokemon/${name}`, {
+                    method: "DELETE",
+                    body: JSON.stringify({ name })
+                });
+            }
+        </script>
+
+        <% if (!!favoriteList) { %>
+            <h1>Il n'y a aucun favori !</h1>
+            <a href="/">Retour à la liste des pokemons</a>
+        <% } %>
+
+        <ul>
+            <% favoriteList.forEach(pokemon => { %>
+                <li>
+                    <a href=<%= `/pokemon/${pokemon.name}` %>> <%= pokemon.name %></a>
+                    <button onclick="removeFavorite(`<%= pokemon.name %>`)">Supprimer des favoris</button>
+                </li>
+            <% }); %>
+        </ul>
+    </body>
+</html>

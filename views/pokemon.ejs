@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pokedex</title>
+        <link rel='stylesheet' href='/stylesheets/style.css' />
+        <style>
+            .container {
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin: 0 auto;
+            }
+
+            span {
+                font-size: 32px;
+                margin-bottom: 25px;
+            }
+
+            .title-pokemon {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .container img {
+                border: solid 1px black;
+                width: 160px;
+            }
+
+            .more-infos {
+                margin-top: 20px;                
+            }
+
+            .add {
+                display: none;
+            }
+
+            .icon {
+                margin-left: 10px;
+                margin-bottom: 31px;
+            }
+
+            textarea {
+                margin: 20px 0;
+                padding: 10px;
+                width: 45%;
+                height: 100px;
+            }
+
+            .types {
+                display: flex;
+                align-items: center;
+                flex-direction: row;
+            }
+
+            .type {
+                margin-left: 5px;
+            }
+
+            .icon {
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            const addFavorite = async () => {
+                const name = document.querySelector("#title").innerHTML;
+
+                await fetch(`http://localhost:3000/pokemon/${name}`, {
+                    method: "POST",
+                    body: JSON.stringify({ name })
+                });
+            }
+        
+            const removeFavorite = async () => {
+                const name = document.querySelector("#title").innerHTML;
+
+                await fetch(`http://localhost:3000/pokemon/${name}`, {
+                    method: "DELETE",
+                    body: JSON.stringify({ name })
+                });
+            }
+
+            const addCommentary = async () => {
+                const name = document.querySelector("#title").innerHTML;
+                const comment = document.querySelector("textarea").value;
+
+                await fetch(`http://localhost:3000/pokemon/${name}`, {
+                    method: "PUT",
+                    body: JSON.stringify({ comment }),
+                    headers: {
+                        "content-type": "application/json"
+                    }
+                });
+            }
+        </script>
+
+        <div class="container">
+            <div class="title-pokemon">
+                <span id="title"><%= pokemon.name %></span>
+                <span class="icon">
+                    <% if (isFavorite) { %> 
+                        <span class="icon" onclick="removeFavorite()">⭐️</span>
+                    <% } else { %>
+                        <span class="icon" onclick="addFavorite()">✩</span>
+                    <% } %> 
+                </span>
+            </div>
+            
+            <div class="image-gallery">
+                <img src=<%= pokemon.sprites.front_default %> alt="" />
+                <img src=<%= pokemon.sprites.front_shiny %> alt="" />
+                <img src=<%= pokemon.sprites.back_default %> alt="" />
+                <img src=<%= pokemon.sprites.back_shiny %> alt="" />
+            </div>
+            
+            <div class="more-infos">
+                <p>Expérience de base : <%= pokemon.base_experience %></p>
+                <p>Poids : <%= pokemon.weight %> kg</p>
+                <p>Taille : <%= pokemon.height %> cm</p>
+
+                <div class="types">
+                    <p>Types du pokemon : </p>
+                    <% types.forEach(type => { %>
+                        <p class="type"><%= type.type.name %></p>
+                    <% }) %>
+                </div>
+            </div>
+
+            <% if (commentary) { %>
+                <p><b>Dernier commentaire :</b> "<%= commentary %>"</p>
+            <% } %>
+
+            <textarea></textarea>
+            <button onclick="addCommentary()">Valider le commentaire</button>
+        </div>
+    </body>
+</html>
